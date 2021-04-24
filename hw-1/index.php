@@ -7,7 +7,7 @@ $age = '31';
 
 echo ("My name is $name<br>");
 echo ("I am $age years old<br>");
-echo '" ' . '! ' . '| ' . '/ ' . "' " . '" ' . "\'";
+echo '" ' . '! ' . '| ' . '/ ' . "' " . '" ' . "\<br>";
 
 //2
 
@@ -80,12 +80,23 @@ foreach ($CARS as $CAR => $name) {
 $rows = 10;
 $cols = 10;
 
-$table = '<table border="2"  width="500">';
-for ($tr = 1; $tr <= $rows; $tr++) {
-    $table .= '<tr>';
+echo '<table border="2"  width="500" bgcolor="#ffe4c4">';
 
-    $table .= '</tr>';
+for ($r = 1; $r <= $rows; $r++) {
+    echo '<tr>';
+    for($c = 1; $c <= $cols; $c++){
+        $result = $r * $c;
+        echo '<td>';
+
+        if ($r % 2 == 0 && $c % 2 == 0) {
+            echo "($result)";
+        } elseif ($r % 2 !== 0 && $c % 2 !== 0) {
+            echo "[$result]";
+        } else {
+            echo $result;
+        }
+        echo '</td>';
+    }
+    echo '</tr>';
 }
-$table .= '</table>';
-
-echo $table;
+echo '</table>';
