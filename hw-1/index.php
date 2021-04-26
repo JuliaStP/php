@@ -23,12 +23,12 @@ echo PICTURES . ' total pictures ' . ' - ' . FELT_TIP . ' felt-tip pens pictures
 
 $age = 31;
 
-if ($age <=65 && $age >=18) {
+if ($age >=1 && $age <=17) {
+    echo 'Вам ещё рано работать<br>';
+} elseif ($age >=18 && $age <=65 ) {
     echo 'Вам еще работать и работать<br>';
 } elseif ($age > 65) {
     echo 'Вам пора на пенсию<br>';
-} elseif ($age >=1 && $age <=17) {
-    echo 'Вам ещё рано работать<br>';
 } else {
     echo 'Неизвестный возраст<br>';
 }
@@ -72,7 +72,10 @@ $CARS = [
     ]
 ];
 foreach ($CARS as $CAR => $name) {
-    echo 'CAR ' . $CAR . '<br>' . $name['model'] . ' ' . $name['speed'] . ' ' . $name['doors'] . ' ' . $name['year'] . '<br>';
+    echo 'CAR ' . $CAR . '<br>';
+    foreach ($name as $desc) {
+        echo $desc . '<br>';
+    }
 }
 
 //6
