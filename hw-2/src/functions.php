@@ -6,13 +6,12 @@ function task1($arg, $return = false)
     $connected = implode($arg);
 
     if ($return == true) {
-        return $connected ;
-    } elseif ($return == false) {
-        foreach($arg as $ar) {
-            echo "<p> $ar </p></br>";
+        return $connected;
         }
+    foreach ($arg as $ar) {
+        echo "<p> $ar </p></br>";
     }
-}
+    }
 
 function task2($string, ...$numbers)
 {

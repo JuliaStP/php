@@ -3,7 +3,7 @@
 require 'src/functions.php';
 
 $arg = ['apple', 'banana', 'orange'];
-task1($arg);
+echo task1($arg, true);
 
 echo task2('/', 2,0);
 
