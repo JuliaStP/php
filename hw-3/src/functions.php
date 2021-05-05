@@ -18,8 +18,13 @@ function task1()
     $json = json_encode($data);
     file_put_contents('users.json', $json);
 
-    if(file_get_contents('users.json')) {
-        $file = json_decode(file_get_contents('users.json'));
+    $content = file_get_contents('users.json');
+
+    if ($content === false) {
+        error_log('There was an error getting data');
+        return;
+    } else {
+        $file = json_decode($content);
         echo 'Data is successfully saved <br>';
 
         $nameCount = array_column($file, 'name');;
@@ -27,7 +32,6 @@ function task1()
 
         echo 'Name count: <br>';
         foreach ($nameCount as $name => $value) {
-//            echo $name . ':'  . $value . '<br>';
               echo $value . ' '  . $name . "s <br>";
         }
 
@@ -35,7 +39,5 @@ function task1()
         $averageAge = array_sum($age) / count($age);
         echo "Average age is: $averageAge";
 
-    } else {
-        error_log('There was an error getting data');
     }
 }
