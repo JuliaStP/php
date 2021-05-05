@@ -1,40 +1,15 @@
 <?php
-///???? how to add traits to price
-trait Gps
-{
-    private $pricePerHour;
-
-    public function addGps(Tariff $trip, &$price)
-    {
-        $hours = ceil($trip->getTime() / 60);
-        $price += $this->pricePerHour * $hours;
-    }
-}
-
-trait Driver
-{
-    private $price;
-
-    public function addDriver(Tariff $trip, &$price)
-    {
-        $price += $this->price;
-    }
-}
-
 
 interface iTariff
 {
-    public function getPrice(): int;
-    public function addServiceGps(addGps $extraService): self;
-    public function addServiceDriver(addDriver $extraService): self;
-    public function getTime(): int;
-    public function getKm(): int;
+    public function getPrice($km, $minutes);
 }
 
 abstract class Tariff implements iTariff
 {
-    use Gps;
-    use Driver;
+    use extraServices {
+        getPrice as traitGetPrice;
+    }
 
     protected $pricePerKm = 10;
     protected $pricePerMin = 3;
@@ -48,47 +23,22 @@ abstract class Tariff implements iTariff
         $this->minutes = $minutes;
     }
 
-    public function getPrice(): int
+    abstract protected function getDetailPrice($km, $minutes);
+
+    final public function getPrice($km, $minutes): int
     {
-
-        $price = $this->km * $this->pricePerKm + $this->minutes * $this->pricePerMin;
-
-        if ($this->extraService) {
-            foreach ($this->extraService as $service) {
-                $service->apply($this, $price);
-            }
-        }
-
-        return $price;
-    }
-
-
-    public function addServiceGps(addGps $extraService): iTariff
-    {
-        array_push($this->extraService, $extraService);
-        return $this;
-    }
-
-    public function addServiceDriver(addDriver $extraService): iTariff
-    {
-        array_push($this->extraService, $extraService);
-        return $this;
-    }
-
-    public function getTime(): int
-    {
-        return $this->minutes;
-    }
-
-    public function getKm(): int
-    {
-        return $this->km;
+        $price = $this->getDetailPrice($km, $minutes);
+        return $price + $this->traitGetPrice($km, $minutes);
     }
 }
 
 class Basic extends Tariff
 {
-
+    protected function getDetailPrice($km, $minutes)
+    {
+        $price = $km * $this->pricePerKm + $minutes * $this->pricePerMin;
+        return $price;
+    }
 }
 
 class Hourly extends Tariff
@@ -96,16 +46,16 @@ class Hourly extends Tariff
     protected $pricePerKm = 0;
     protected $pricePerMin = 200 / 60;
 
-    public function __construct(int $km, int $minutes)
+    protected function getDetailPrice($km, $minutes)
     {
-        parent:: __construct($km, $minutes);
-
-        if($this->minutes < 60) {
-            $this->minutes = 60;
+        if($minutes < 60) {
+            $minutes = 60;
         } else {
-            $rest = $this->minutes % 60;
-            $this->minutes = $this->minutes = $rest + 60;
+            $rest = $minutes % 60;
+            $minutes = $minutes = $rest + 60;
         }
+        $price = $km * $this->pricePerKm + $minutes * $this->pricePerMin;
+        return $price;
     }
 }
 
@@ -113,9 +63,58 @@ class Student extends Tariff
 {
     protected $pricePerKm = 4;
     protected $pricePerMin = 1;
+
+    protected function getDetailPrice($km, $minutes)
+    {
+        $price = $km * $this->pricePerKm + $minutes * $this->pricePerMin;
+        return $price;
+    }
 }
 
-$trip = new Basic(5, 15);
+trait extraServices {
+    protected $extraService = [];
+
+    public function addExtraService(iTariff $tariff)
+    {
+        array_push($this->extraService, $tariff);
+    }
+
+    public function getPrice($km, $minutes)
+    {
+        $price = 0;
+
+        foreach ($this->extraService as $extraService) {
+            $price += $extraService->getPrice($km, $minutes);
+        }
+        return $price;
+    }
+}
+class Gps implements iTariff
+{
+    private $pricePerHour = 15;
+
+    public function getPrice($km, $minutes)
+    {
+        $hours = ceil($minutes / 60);
+        return $price + $this->pricePerHour * $hours;
+    }
+}
+
+class Driver implements iTariff
+{
+    private $priceForDriver = 100;
+
+    public function getPrice($km, $minutes)
+    {
+        return $this->priceForDriver;
+    }
+}
+
+$trip = new Hourly(1,1);
+
 echo '<br>';
-echo $trip->getPrice();
+echo $trip->addExtraService(new Driver());
+echo $trip->addExtraService(new Gps());
 echo '<br>';
+echo $trip->getPrice(1,40);
+
