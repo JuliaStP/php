@@ -65,4 +65,9 @@ class Blog extends AbstractController
         header('Location: /');
         exit();
     }
+
+    public function twig()
+    {
+        return $this->view->getTwig('footer.twig', ['var' => 'this is footer']);
+    }
 }

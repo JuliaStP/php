@@ -5,6 +5,7 @@ class View
 {
     private $tmpPath;
     private $data;
+    private $twig;
 
     public function __construct()
     {
@@ -29,5 +30,21 @@ class View
         include $this->tmpPath . '/' . $tmp;
         $data = ob_get_clean();
         return $data;
+    }
+
+
+    //hw-5.2
+
+    public function getTwig(string $tpm, $data = [])
+    {
+        if (!$this->twig) {
+            $loader = new \Twig\Loader\FilesystemLoader($this->tmpPath);
+            $this->twig = new \Twig\Environment(
+                $loader,
+                ['cache' => $this->tmpPath . '_cache']
+            );
+        }
+
+        return $this->twig->render($tpm, $data);
     }
 }
