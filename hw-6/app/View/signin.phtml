@@ -1,0 +1,45 @@
+<html>
+<head>
+    <style>
+        .container { display: flex; flex-direction: column; align-items: center;}
+        .block { display: inline-block; vertical-align: top; text-align: left; }
+        .block input { width: 150px; }
+        .cell { width: 150px; display: inline-block; margin-bottom: 5px }
+        .button { padding-left: 15px; color: black; text-decoration:none; font-size: 12px; border-radius: 10px;float: right; padding-right: 15px; }
+    </style>
+</head>
+<body>
+<div class="container">
+<h2 style="text-align: center"><?=$this->title;?></h2> <br><br>
+<?php
+/** @var \App\Model\Eloquent\User $user */
+$user = $this->user;
+?>
+
+<? if(!$user): ?>
+
+    <div style="text-align: center">
+        First time vising? Please sign up
+        <a href="/signup">Sign Up</a>
+    </div>
+
+    <br><br>
+
+    <div class="block" style="margin-left: 50px;">
+        <h3 style="text-align: center">Sign in</h3>
+        <form action="/signin/auth" method="post">
+            <div class="cell">Email:</div> <input type="text" value="" name="email"><br><br>
+            <div class="cell">Password:</div> <input type="text" value="" name="password"><br><br>
+            <input class="button" type="submit" value="Sign in">
+        </form>
+
+    </div>
+<? else: ?>
+    You are signed in as <?=$user->getName();?>
+<? endif; ?>
+
+</div>
+<?php require 'footer.twig';
+?>
+</body>
+</html>

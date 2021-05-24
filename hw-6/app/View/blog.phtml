@@ -1,0 +1,58 @@
+<style>
+    .container { display: flex; flex-direction: column; align-items: center;}
+    a.signout { background: antiquewhite; font-size: 16px }
+    a.signout:hover { background: burlywood}
+    .message { margin: 10px; padding: 10px; border: 2px solid black; width: 500px; min-height: 200px;}
+    .author { margin-left: 10px; }
+    .text { padding-left: 15px; padding-top: 15px; }
+    .date {color: grey; font-size: 11px;}
+    .button { padding-left: 15px; color: black; text-decoration:none; font-size: 12px; background-color: indianred; overflow: hidden; border-radius: 10px;float: right; padding-right: 15px; }
+    .button-send {background-color: darkseagreen};
+
+</style>
+<div class="container">
+        <a class="button signout" href="/blog/signout">Sign out</a>
+<h2>BLOG</h2>
+    <h3>ADD MESSAGE:</h3>
+    <form enctype="multipart/form-data" action="/blog/addMessage" method="post">
+        <textarea class="message" type="text" value="" name="text" required></textarea><br><br>
+        <span>Add picture:
+        <input type="file" name="image"><br>
+    </span>
+        <input class="button button-send" type="submit" value="Send">
+    </form>
+<?php
+/** @var $message \App\Model\Eloquent\Message */
+/** @var $user \App\Model\Eloquent\User */
+$user = $this->user;
+?>
+    <h3>ALL MESSAGES:</h3>
+<?php if($messages = $this->messages): ?>
+    <?php foreach ($messages as $message): ?>
+        <div class="message">
+            <? if($user->isAdmin()): ?>
+                <div>
+                    <a class="button" href="/admin/deleteMessage/?id=<?=$message->getId();?>">Delete</a>
+                </div>
+            <? endif; ?>
+            <span class="date"><?=$message->getDate();?> </span>
+            <? if($author = $message->getAuthor()):?>
+                <span class="author"><?=htmlspecialchars($author->getName());?></span>
+            <? else: ?>
+                <span class="author">Message from deleted user</span>
+            <? endif; ?>
+            <div class="text"><?=htmlspecialchars(nl2br($message->getText()));?></div>
+            <? if($message->getImage()):?>
+                <div>
+                    <img src="/images/<?=$message->getImage();?>" style="width: 150px;">
+                </div>
+            <? endif;?>
+        </div>
+    <?php endforeach; ?>
+<?php else: ?>
+    There are no messages so far <br>
+<?php endif; ?>
+
+</div>
+<?php
+require 'footer.twig';
