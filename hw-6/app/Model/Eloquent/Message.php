@@ -13,14 +13,10 @@ class Message extends Model
         'user_id',
         'image',
     ];
-    /**
-     * @var mixed
-     */
-    private $author;
 
     public function author(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
     public static function deleteMessage(int $messageId)
@@ -62,12 +58,12 @@ class Message extends Model
         return $this->userId;
     }
 
-    public function setAuthor(User $author)
+    public function setAuthor(User $author): void
     {
         $this->author = $author;
     }
 
-    public function getAuthor()
+    public function getAuthor(): ?User
     {
         return $this->author;
     }
