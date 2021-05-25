@@ -32,6 +32,13 @@ class View
         return $data;
     }
 
+    public function assign($data)
+    {
+        foreach ($data as $key => $value) {
+            $this->data[$key] = $value;
+        }
+    }
+
 
     //hw-5.2
 

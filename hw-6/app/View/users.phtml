@@ -1,0 +1,122 @@
+<style>
+    .container { display: flex; flex-direction: column; align-items: center;}
+    a.signout { background: antiquewhite; font-size: 16px }
+    a.signout:hover { background: burlywood}
+    .message { margin: 10px; padding: 10px; border: 2px solid black; width: 500px; min-height: 200px;}
+    .author { margin-left: 10px; }
+    .text { padding-left: 15px; padding-top: 15px; }
+    .date {color: grey; font-size: 11px;}
+    .button { padding-left: 15px; color: black; text-decoration:none; font-size: 12px; background-color: indianred; overflow: hidden; border-radius: 10px;float: right; padding-right: 15px; }
+    .button-send {background-color: darkseagreen};
+
+    .user { margin: 5px 0 0 5px; border: 1px solid grey; width: 850px; min-height: 100px;}
+    .author { margin-left: 10px; }
+    .text { padding-left: 15px; padding-top: 15px; }
+    .date {color: grey; font-size: 11px;}
+    .admin a { color: #46468b; float: right; padding-right: 15px; }
+</style>
+
+<script src="/js/jquery.js"></script>
+
+<?php
+/** @var $message \App\Model\Eloquent\Message */
+/** @var $user \App\Model\Eloquent\User */
+$user = $this->user;
+?>
+<div class="container">
+    Hi, <?=$user->getName();?>
+    <a class="button signout" href="/blog/signout">Sign out</a>
+    <br><br>
+
+    <h2>LIST OF ALL USERS:</h2>
+    <br><br>
+
+<?php if($users = $this->users): ?>
+    <?php foreach ($users as $user): ?>
+        <div class="user" id="user_block_<?=$user->getId();?>">
+            ID: <?=$user->getId();?> <br>
+            Username: <input type="text" id="user_username_<?=$user->getId();?>" value="<?=htmlspecialchars($user->getName());?>"><br>
+            Email: <input type="text" id="user_email_<?=$user->getId();?>" value="<?=htmlspecialchars($user->email);?>"><br>
+            Password: <input type="text" id="user_password_<?=$user->getId();?>"><br>
+            <br>
+            <input type="button" class="button button-send" onclick="saveUser(<?=$user->getId();?>);" value="Save">
+            <input type="button" class="button" onclick="deleteUser(<?=$user->getId();?>);" value="Delete">
+
+            <div id="response_<?=$user->getId();?>">
+            </div>
+        </div> <br><br>
+    <?php endforeach; ?>
+<?php else: ?>
+    No messages so far
+<?php endif; ?>
+
+<script>
+    function saveUser(userId)
+    {
+        $.post(
+            '/admin/saveUser',
+            {
+                id: userId,
+                username: $('#user_username_' + userId).val(),
+                email: $('#user_email_' + userId).val(),
+                password: $('#user_password_' + userId).val(),
+            },
+            function (response) {
+                if (response.error) {
+                    $('#response_' + userId).html('<span style="color:red">' + response.error + '</span>');
+                } else {
+                    $('#response_' + userId).html('<span style="color:green">' + response.result + '</span>');
+                }
+            }
+        );
+    }
+
+    function deleteUser(userId)
+    {
+        $.post(
+            '/admin/deleteUser',
+            {
+                id: userId,
+            },
+            function (response) {
+                if (response.error) {
+                    $('#response_' + userId).html('<span style="color:red">' + response.error + '</span>');
+                } else {
+                    $('#response_' + userId).html('<span style="color:green">' + response.result + '</span>');
+                    setTimeout(function() {
+                        $('#user_block_' + userId).remove();
+                    }, 1000);
+                }
+            }
+        );
+    }
+
+    function addUser()
+    {
+        $.post(
+            '/admin/addUser',
+            {
+                username: $('#user_username').val(),
+                email: $('#user_email').val(),
+                password: $('#user_password').val(),
+            },
+            function (response) {
+                if (response.error) {
+                    $('#response').html('<span style="color:red">' + response.error + '</span>');
+                } else {
+                    $('#response').html('<span style="color:green">' + response.result + '</span>');
+                }
+            }
+        );
+    }
+</script>
+
+    <h3>ADD NEW USER:</h3>
+    <br><br>
+
+    Username: <input type="text"  id="user_username"> <br>
+    Email: <input type="text"  id="user_email"> <br>
+    Password: <input type="text"  id="user_password"> <br><br>
+    <input class="button button-send" type="button" value="Send" onclick="addUser();"> <br>
+    <div id="response"></div>
+</div>

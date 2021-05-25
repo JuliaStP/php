@@ -13,6 +13,10 @@ class Message extends Model
         'user_id',
         'image',
     ];
+    /**
+     * @var mixed
+     */
+    private $author;
 
     public function author(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
@@ -58,14 +62,14 @@ class Message extends Model
         return $this->userId;
     }
 
-    public function getAuthor()
-    {
-        return $this->author;
-    }
-
     public function setAuthor(User $author)
     {
         $this->author = $author;
+    }
+
+    public function getAuthor()
+    {
+        return $this->author;
     }
 
     public function addImage(string $file)

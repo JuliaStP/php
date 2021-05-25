@@ -51,7 +51,11 @@ class AbstractController
 
     public function accessAdmin()
     {
-
+        if ($this->getUser()) {
+            $this->view->assign([
+                'user' => $this->getUser()
+            ]);
+        }
     }
 }
 
